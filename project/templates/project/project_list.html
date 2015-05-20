@@ -1,36 +1,48 @@
-{% load staticfiles %}
-<!DOCTYPE html>
-<html lang="zh-CN">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <title>project list</title>
+{% extends "project/base.html" %}
 
-    <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+{% block container %}
+<div class="row"><h1>工程情况</h1></div>
+<div class="row">
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>项目名称</th>
+                <th>列入计划</th>
+                <th>项目立项</th>
+                <th>招标登记表</th>
+                <th>合同签订</th>
+                <th>开工日期</th>
+                <th>竣工日期</th>
+                <th>系统录入</th>
+                <th>工程验收</th>
+                <th>招标控制价<br/>(万元)</th>
+                <th>中标价格<br/>(万元)</th>
+                <th>最终审定价<br/>(万元)</th>
+                <th>中标单位</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for object in object_list %}
+            <tr>
+                <th scope="row">{{ object.pk }}</th>
+                <td>{{ object.name }}</td>
+                <td>{{ object.planned|yesno:"是, 否" }}</td>
+                <td>{{ object.get_approval_chart_display }}</td>
+                <td>{{ object.get_tendering_chart_display }}</td>
+                <td>{{ object.get_contract_display }}</td>
+                <td>2015/1/2</td>
+                <td>2015/2/3</td>
+                <td>{{ object.get_online_system_input_display }}</td>
+                <td>{{ object.get_acceptance_display }}</td>
+                <td>{{ object.get_prices.0|floatformat:2 }}</td>
+                <td>{{ object.get_prices.1|floatformat:2 }}</td>
+                <td>{{ object.get_prices.2|floatformat:2 }}</td>
+                <td>{{ object.successful_bidder }}</td>
+            </tr>
+        {% endfor %}
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <div class="container-fluid">
-        <div class="row"><h1>工程情况</h1></div>
-        <div class="row">
-            <table class="table table-striped">
-                
-            </table>
-        </div>
-    </div>
-
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="http://cdn.bootcss.com/jquery/1.11.2/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
-  </body>
-</html>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

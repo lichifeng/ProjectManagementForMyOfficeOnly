@@ -1,6 +1,8 @@
 # -*- coding:utf-8 -*-
 from __future__ import unicode_literals
+from __future__ import division
 from django.db import models
+
 
 class Project(models.Model):
     # 项目名称
@@ -14,70 +16,108 @@ class Project(models.Model):
         default=True
     )
     # 立项申请（允许立项）及照片
+    permit_choices = (
+        (True, "已办理"),
+        (False, "未办理")
+    )
     permit = models.BooleanField(
+        verbose_name="立项申请",
         help_text="是否有立项申请（年度计划内项目不需要）",
-        default=False
+        default=False,
+        choices=permit_choices
     )
-    permit_img = models.ImageField(
-        help_text="项目立项申请扫描图片",
-        blank=True
-    )
+    permit_img = models.ImageField(verbose_name="立项申请", help_text="项目立项申请扫描图片", blank=True)
     # 立项单及照片
-    approval_chart = models.BooleanField(help_text="立项单流程是否完成", default=False)
-    approval_chart_img = models.ImageField(help_text="项目立项单扫描图片",
-                                           blank=True)
-    # 招投标表及照片
-    tendering_chart = models.BooleanField(help_text="招投标登记表流程是否完成", default=False)
-    tendering_agency_img = models.ImageField(
-        help_text="招投标登记表扫描图片",
-        blank=True
+    approval_chart_choices = (
+        (True, "已立项"),
+        (False, "办理中"),
     )
+    approval_chart = models.BooleanField(
+        verbose_name="项目立项", help_text="立项单办理情况", default=False, choices=approval_chart_choices
+    )
+    approval_chart_img = models.ImageField(verbose_name="项目立项单", help_text="项目立项单扫描图片", blank=True)
+    # 招投标表及照片
+    tendering_chart_choices = (
+        (0, "办理中"),
+        (1, "市级公开"),
+        (2, "镇级公开"),
+        (3, "邀请招标"),
+        (4, "竞争性谈判"),
+        (5, "询价发包"),
+        (6, "直接发包"),
+    )
+    tendering_chart = models.IntegerField(
+        verbose_name="招标登记", help_text="招投标登记表办理情况", default=0, choices=tendering_chart_choices, blank=True
+    )
+    tendering_agency_img = models.ImageField(verbose_name="招标登记表", help_text="招投标登记表扫描图片", blank=True)
     # 招标代理
     tendering_agency = models.CharField(
         max_length=255,
         help_text="项目招标代理情况",
-        blank=True
+        blank=True,
+        verbose_name="招标代理"
     )
     # 招标控制价
     controlled_price = models.IntegerField(
-        help_text="项目招标控制价（精确到整数，单位元）",
+        help_text="精确到整数，单位元",
         blank=True,
-        default=0
+        default=0,
+        verbose_name="招标控制价"
     )
     # 中标单位
     successful_bidder = models.CharField(
         max_length=255,
-        help_text="中标单位信息",
-        blank=True
+        help_text="包括中标单位名称，项目联系人及联系方式",
+        blank=True,
+        verbose_name="中标单位"
     )
     # 中标价格
     bid_price = models.IntegerField(
-        help_text="项目中标价格（精确到整数，单位元）",
+        help_text="精确到整数，单位元",
         blank=True,
-        default=0
+        default=0,
+        verbose_name="中标价格"
     )
     # 监理单位
     supervisor = models.CharField(
         max_length=255,
-        help_text="项目监理单位信息",
-        blank=True
+        help_text="包括监理单位名称，项目联系人及联系方式",
+        blank=True,
+        verbose_name="监理单位"
     )
     # 审计单位
     audit = models.CharField(
         max_length=255,
-        help_text="项目审计单位信息",
-        blank=True
+        help_text="包括审计单位名称，项目联系人及联系方式",
+        blank=True,
+        verbose_name="审计单位"
     )
     # 合同签订
-    contract = models.BooleanField(help_text="合同签订情况", default=False)
+    contract_choices = (
+        (True, "已签订"),
+        (False, "未签订"),
+    )
+    contract = models.BooleanField(verbose_name="合同签订", default=False, choices=contract_choices)
     # 网上系统录入
-    online_system_input = models.BooleanField(help_text="招投标管理系统录入情况", default=False)
+    online_system_input_choices = (
+        (True, "已录入"),
+        (False, "未录入"),
+    )
+    online_system_input = models.BooleanField(
+        verbose_name="系统录入", help_text="镇招投标监管系统录入情况", default=False, choices=online_system_input_choices
+    )
     # 工程验收及验收单照片
-    acceptance = models.BooleanField(help_text="工程验收情况", default=False)
-    acceptance_img = models.ImageField(help_text="工程验收单图片",
-                                       blank=True)
+    acceptance_choices = (
+        (True, "已验收"),
+        (False, "未验收")
+    )
+    acceptance = models.BooleanField(verbose_name="工程验收", default=False, choices=acceptance_choices)
+    acceptance_img = models.ImageField(verbose_name="竣工验收单", help_text="工程验收单扫描图片", blank=True)
     # 最终审定价格
-    audit_price = models.IntegerField(help_text="工程最终审定价格", blank=True, default=0)
+    audit_price = models.IntegerField(verbose_name="审定价格", help_text="工程最终审定价格", blank=True, default=0)
+
+    def get_prices(self):
+        return self.controlled_price / 10000, self.bid_price / 10000, self.audit_price / 10000
 
     def __unicode__(self):
         return self.name
