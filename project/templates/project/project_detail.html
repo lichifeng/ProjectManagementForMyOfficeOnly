@@ -1,5 +1,174 @@
 {% extends "project/base.html" %}
-
+{% load icon %}{# 需要在extends后面load #}
+{% block title %}
+项目详细信息
+{% endblock %}
 {% block container %}
+  <style>
+    .btn-row {
+      margin-top: 10px;
+    }
+
+    .big-font {
+      font-size: 18px;
+    }
+
+    td img {
+      max-height: 180px;
+    }
+  </style>
+  <div class="row text-center"><h1>项目详细情况</h1></div>
+  <div class="panel panel-default big-font">
+    <div class="panel-heading">基本信息</div>
+    <table class="table table-bordered table-hover">
+      <tr>
+        <td class="col-lg-2 text-center"><strong>项目名称</strong></td>
+        <td class="col-lg-10" colspan="5">{{ object.name }}</td>
+      </tr>
+      <tr>
+        <td class="text-center"><strong>项目简介</strong></td>
+        <td colspan="5">{{ object.introduction }}</td>
+      </tr>
+      <tr class="text-center">
+        <td class="col-lg-2"><strong>控制价（概算）</strong></td>
+        <td class="col-lg-2">{{ object.get_prices.0|floatformat:2 }}</td>
+        <td class="col-lg-2"><strong>中标价格</strong></td>
+        <td class="col-lg-2">{{ object.get_prices.1|floatformat:2 }}</td>
+        <td class="col-lg-2"><strong>最终审计价</strong></td>
+        <td class="col-lg-2">{{ object.get_prices.2|floatformat:2 }}</td>
+      </tr>
+    </table>
+  </div>
+  <div class="panel panel-default big-font">
+    <div class="panel-heading">流程办理</div>
+    <table class="table table-bordered table-hover">
+      <tr>
+        <th class="text-center">立项申请</th>
+        <th class="text-center">立项单</th>
+        <th class="text-center">招标登记表</th>
+        <th class="text-center">合同签订</th>
+        <th class="text-center">竣工验收</th>
+      </tr>
+      <tr class="text-center">
+        <td>{% if object.permit %}
+          {% icon "glyphicon-ok" "#419641" %}
+          {% else %}
+          {% if object.planned %}(不需要){% else %}待办{% endif %}
+        {% endif %} </td>
+        <td>{% if object.approval_chart %}
+        {% icon "glyphicon-ok" "#419641" %}
+          {% else %}
+          {% icon "glyphicon-remove" "#990000" %}
+        {% endif %} </td>
+        <td>{% if object.tendering_chart %}
+        {% icon "glyphicon-ok" "#419641" %}
+          {% else %}
+          {% icon "glyphicon-remove" "#990000" %}
+        {% endif %} </td>
+        <td>{% if contract %}
+        {% icon "glyphicon-ok" "#419641" %}
+          {% else %}
+          {% icon "glyphicon-remove" "#990000" %}    
+        {% endif %} </td>
+      <td>
+        {% if object.acceptance %}{% icon "glyphicon-ok" "#419641" %}
+        {% else %}(未验收){% endif %}
+      </td>
+      </tr>
+    </table>
+  </div>
+  <div class="panel panel-default big-font">
+    <div class="panel-heading">相关单位</div>
+    <table class="table table-bordered table-hover">
+      <tr>
+        <th class="col-lg-2 text-center">招标代理</th>
+        <td>{{ object.tendering_agency }}</td>
+      </tr>
+      <tr>
+        <th class="col-lg-2 text-center">中标单位</th>
+        <td>{{ object.successful_bidder }}</td>
+      </tr>
+      <tr>
+        <th class="col-lg-2 text-center">监理单位</th>
+        <td>{{ object.supervisor }}</td>
+      </tr>
+      <tr>
+        <th class="col-lg-2 text-center">设计单位</th>
+        <td></td>
+      </tr>
+      <tr>
+        <th class="col-lg-2 text-center">审计单位</th>
+        <td>{{ object.audit }}</td>
+      </tr>
+    </table>
+  </div>
+  <div class="panel panel-default big-font">
+    <div class="panel-heading">相关文件</div>
+    <table class="table table-bordered table-hover">
+      <tr>
+        <th class="col-lg-3 text-center">立项申请</th>
+        <th class="col-lg-3 text-center">立项单</th>
+        <th class="col-lg-3 text-center">招标登记表</th>
+        <th class="col-lg-3 text-center">竣工验收单</th>
+      </tr>
+      <tr class="text-center">
+        <td>
+          {% if object.permit_img %}
+            <a href="{{ object.permit_img.url }}" target="_blank" class="thumbnail"><img src="{{ object.permit_img.url }}" alt=""/></a>
+          {% else %}
+            (未提供)
+          {% endif %}
+        </td>
+        <td>
+          {% if object.approval_chart_img %}
+            <a href="{{ object.approval_chart_img.url }}" target="_blank" class="thumbnail"><img src="{{ object.approval_chart_img.url }}" alt=""/></a>
+          {% else %}
+            (未提供)
+          {% endif %}
+        </td>
+        <td>
+          {% if object.tendering_chart_img %}
+            <a href="{{ object.tendering_chart_img.url }}" target="_blank" class="thumbnail"><img src="{{ object.tendering_chart_img.url }}" alt=""/></a>
+          {% else %}
+            (未提供)
+          {% endif %}
+        </td>
+        <td>
+          {% if object.acceptance_img %}
+            <a href="{{ object.acceptance_img }}" target="_blank" class="thumbnail"><img src="{{ object.acceptance_img }}" alt=""/></a>
+          {% else %}
+            (未提供)
+          {% endif %}
+        </td>
+      </tr>
+    </table>
+  </div>
+
+    <div class="panel panel-default big-font">
+    <div class="panel-heading">待办事项</div>
+    <table class="table table-bordered table-hover">
+      <tr>
+        <th class="text-center col-lg-1">#</th>
+        <th class="text-center col-lg-10">具体内容</th>
+        <th class="text-center col-lg-1">办理进度</th>
+      </tr>
+      {% for note in object.note_set.all %}{# all不能少 #}
+        <tr{% if not note.done %} class="bg-warning"{% endif %}>
+          <td>{{ note.pk }}</td>
+          <td>{{ note.content }}</td>
+          <td class="text-center">{% if note.done %}
+            {% icon "glyphicon-check" "#006600 " %}
+          {% else %}
+            {% icon "glyphicon-hourglass" "#993300" %}
+          {% endif %} </td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <div class="row btn-row text-center">
+    <a href="/admin/project/project/{{ object.pk }}/" class="btn btn-primary">修改项目信息</a>
+    <a href="/" class="btn btn-default">返回项目列表</a>
+  </div>
 
 {% endblock %}

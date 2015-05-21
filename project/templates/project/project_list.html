@@ -1,47 +1,96 @@
 {% extends "project/base.html" %}
-
+{% load icon find_todo %}{# 需要在extends后面load #}
+{% block title %}
+项目情况汇总表
+{% endblock %}
 {% block container %}
-<div class="row"><h1>工程情况</h1></div>
-<div class="row">
-    <table class="table table-striped table-bordered">
+    <div class="panel panel-default big-font" style="margin-top: 45px;">
+    <div class="panel-heading">项目情况汇总表</div>
+    <div class="panel-body text-right">
+      注：项目序号为红色背景表示有待办事项未完成！
+      <a href="/admin/project/project/add/">
+    {% icon "glyphicon-plus" "#009900" %}
+    增加项目
+    </a>
+    </div>
+    <table class="table table-bordered table-condensed table-hover">
         <thead>
             <tr>
-                <th>#</th>
-                <th>项目名称</th>
-                <th>列入计划</th>
-                <th>项目立项</th>
-                <th>招标登记表</th>
-                <th>合同签订</th>
-                <th>开工日期</th>
-                <th>竣工日期</th>
-                <th>系统录入</th>
-                <th>工程验收</th>
-                <th>招标控制价<br/>(万元)</th>
-                <th>中标价格<br/>(万元)</th>
-                <th>最终审定价<br/>(万元)</th>
-                <th>中标单位</th>
+                <th class="text-center">#</th>
+                <th class="text-center">项目名称</th>
+                <th class="text-center">计划内</th>
+                <th class="text-center">项目立项</th>
+                <th class="text-center">招标登记</th>
+                <th class="text-center">合同签订</th>
+                <th class="text-center">开工日期</th>
+                <th class="text-center">竣工日期</th>
+                <th class="text-center">系统录入</th>
+                <th class="text-center">工程验收</th>
+                <th class="text-center">控制价<br/>(万元)</th>
+                <th class="text-center">中标价<br/>(万元)</th>
+                <th class="text-center">审定价<br/>(万元)</th>
+                <th class="text-center">中标单位</th>
             </tr>
         </thead>
         <tbody>
         {% for object in object_list %}
             <tr>
-                <th scope="row">{{ object.pk }}</th>
-                <td>{{ object.name }}</td>
-                <td>{{ object.planned|yesno:"是, 否" }}</td>
-                <td>{{ object.get_approval_chart_display }}</td>
-                <td>{{ object.get_tendering_chart_display }}</td>
-                <td>{{ object.get_contract_display }}</td>
-                <td>2015/1/2</td>
-                <td>2015/2/3</td>
-                <td>{{ object.get_online_system_input_display }}</td>
-                <td>{{ object.get_acceptance_display }}</td>
-                <td>{{ object.get_prices.0|floatformat:2 }}</td>
-                <td>{{ object.get_prices.1|floatformat:2 }}</td>
-                <td>{{ object.get_prices.2|floatformat:2 }}</td>
+                <th scope="row" class="text-right {% if object|find_todo %}bg-danger{% endif %} ">{{ object.pk }}</th>
+                <td class="text-center">
+                  <a href="{{ object.get_absolute_url }}">
+                    {{ object.name }}
+                  </a>
+                </td>
+                <td class="text-center">
+                  {% if object.planned %}
+                    {% icon "glyphicon-ok" "#419641" %}
+                  {% else %}
+                    {% icon "glyphicon-remove" "#a80000" %}
+                  {% endif %}
+                </td>
+                <td class="text-center">
+                  {% if object.approval_chart %}
+                    {% icon "glyphicon-ok" "#419641" %}
+                  {% else %}
+                    {{ object.get_approval_chart_display }}
+                  {% endif %}
+                </td>
+                <td class="text-center">
+                  {% if object.tendering_chart == 0 %}
+                    {{ object.get_tendering_chart_display }}
+                  {% else %}
+                    {% icon "glyphicon-ok" "#419641" %}({{ object.get_tendering_chart_display }})
+                  {% endif %}
+                </td>
+                <td class="text-center">
+                  {% if object.contract %}
+                    {% icon "glyphicon-ok" "#419641" %}
+                  {% else %}
+                    {{ object.get_contract_display }}
+                  {% endif %}
+                </td>
+                <td class="text-center">{{ object.project_begin|date:"Y-n-d"|default:"-" }}</td>
+                <td class="text-center">{{ object.project_finish|date:"Y-n-d"|default:"-" }}</td>
+                <td class="text-center">
+                  {% if object.online_system_input %}
+                    {% icon "glyphicon-ok" "#419641" %}
+                  {% else %}
+                    {% icon "glyphicon-remove" "#a80000" %}
+                  {% endif %}
+                </td>
+                <td class="text-center">
+                  {% if object.acceptance %}
+                    {% icon "glyphicon-ok" "#419641" %}
+                  {% else %}
+                    {{ object.get_acceptance_display }}
+                  {% endif %}
+                </td>
+                <td class="text-center">{{ object.get_prices.0|floatformat:2 }}</td>
+                <td class="text-center">{{ object.get_prices.1|floatformat:2 }}</td>
+                <td class="text-center">{{ object.get_prices.2|floatformat:2 }}</td>
                 <td>{{ object.successful_bidder }}</td>
             </tr>
         {% endfor %}
-
         </tbody>
     </table>
 </div>

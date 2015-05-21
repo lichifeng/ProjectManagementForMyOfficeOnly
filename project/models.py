@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 from __future__ import unicode_literals
 from __future__ import division
+from django.core.urlresolvers import reverse
 from django.db import models
 
 
@@ -47,9 +48,9 @@ class Project(models.Model):
         (6, "直接发包"),
     )
     tendering_chart = models.IntegerField(
-        verbose_name="招标登记", help_text="招投标登记表办理情况", default=0, choices=tendering_chart_choices, blank=True
+        verbose_name="招标登记", help_text="招投标登记表办理情况", default=0, choices=tendering_chart_choices
     )
-    tendering_agency_img = models.ImageField(verbose_name="招标登记表", help_text="招投标登记表扫描图片", blank=True)
+    tendering_chart_img = models.ImageField(verbose_name="招标登记表", help_text="招投标登记表扫描图片", blank=True)
     # 招标代理
     tendering_agency = models.CharField(
         max_length=255,
@@ -115,9 +116,31 @@ class Project(models.Model):
     acceptance_img = models.ImageField(verbose_name="竣工验收单", help_text="工程验收单扫描图片", blank=True)
     # 最终审定价格
     audit_price = models.IntegerField(verbose_name="审定价格", help_text="工程最终审定价格", blank=True, default=0)
+    # 开工和竣工日期
+    project_begin = models.DateField(blank=True, null=True, verbose_name="开工日期")
+    project_finish = models.DateField(blank=True, null=True, verbose_name="竣工日期")
+
 
     def get_prices(self):
         return self.controlled_price / 10000, self.bid_price / 10000, self.audit_price / 10000
 
+    def get_absolute_url(self):
+        return reverse('project-detail', kwargs={'pk': self.pk})
+
     def __unicode__(self):
         return self.name
+
+
+class Note(models.Model):
+    content = models.TextField(verbose_name="待办事项")
+    project = models.ForeignKey(Project, verbose_name="所属项目")
+    done = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['done']
+
+    def get_absolute_url(self):
+        return reverse('note-detail', kwargs={'pk': self.pk})
+
+    def __unicode__(self):
+        return "[{0}]的#{1}事项".format(self.project.name, self.pk)
