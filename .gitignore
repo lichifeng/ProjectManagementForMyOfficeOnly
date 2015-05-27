@@ -1,6 +1,8 @@
 # Created by https://www.gitignore.io
 
 db.sqlite3
+images/
+static/
 
 ### PyCharm ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm

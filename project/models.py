@@ -30,11 +30,12 @@ class Project(models.Model):
     permit_img = models.ImageField(verbose_name="立项申请", help_text="项目立项申请扫描图片", blank=True)
     # 立项单及照片
     approval_chart_choices = (
-        (True, "已立项"),
-        (False, "办理中"),
+        (1, "已立项"),
+        (0, "办理中"),
+        (2, "未办理")
     )
-    approval_chart = models.BooleanField(
-        verbose_name="项目立项", help_text="立项单办理情况", default=False, choices=approval_chart_choices
+    approval_chart = models.IntegerField(
+        verbose_name="项目立项", help_text="立项单办理情况", default=0, choices=approval_chart_choices
     )
     approval_chart_img = models.ImageField(verbose_name="项目立项单", help_text="项目立项单扫描图片", blank=True)
     # 招投标表及照片
@@ -58,6 +59,8 @@ class Project(models.Model):
         blank=True,
         verbose_name="招标代理"
     )
+    # 开标日期
+    bid_date = models.DateField(blank=True, null=True, verbose_name="开标日期")
     # 招标控制价
     controlled_price = models.IntegerField(
         help_text="精确到整数，单位元",

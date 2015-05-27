@@ -1,5 +1,5 @@
 {% extends "project/base.html" %}
-{% load icon find_todo %}{# 需要在extends后面load #}
+{% load icon find_todo float_format_v2 %}{# 需要在extends后面load #}
 {% block title %}
 项目情况汇总表
 {% endblock %}
@@ -49,7 +49,7 @@
                   {% endif %}
                 </td>
                 <td class="text-center">
-                  {% if object.approval_chart %}
+                  {% if object.approval_chart == 1 %}
                     {% icon "glyphicon-ok" "#419641" %}
                   {% else %}
                     {{ object.get_approval_chart_display }}
@@ -85,9 +85,9 @@
                     {{ object.get_acceptance_display }}
                   {% endif %}
                 </td>
-                <td class="text-center">{{ object.get_prices.0|floatformat:2 }}</td>
-                <td class="text-center">{{ object.get_prices.1|floatformat:2 }}</td>
-                <td class="text-center">{{ object.get_prices.2|floatformat:2 }}</td>
+                <td class="text-center">{{ object.get_prices.0|float_format_v2:2 }}</td>
+                <td class="text-center">{{ object.get_prices.1|float_format_v2:2 }}</td>
+                <td class="text-center">{{ object.get_prices.2|float_format_v2:2 }}</td>
                 <td>{{ object.successful_bidder }}</td>
             </tr>
         {% endfor %}
