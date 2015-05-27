@@ -55,7 +55,7 @@
           {% else %}
           {% if object.planned %}(不需要){% else %}待办{% endif %}
         {% endif %} </td>
-        <td>{% if object.approval_chart %}
+        <td>{% if object.approval_chart == 1 %}
         {% icon "glyphicon-ok" "#419641" %}
           {% else %}
           {% icon "glyphicon-remove" "#990000" %}
