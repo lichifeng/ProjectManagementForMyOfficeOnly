@@ -23,8 +23,6 @@
                 <th class="text-center">招标登记</th>
                 <th class="text-center">开标日期</th>
                 <th class="text-center">合同签订</th>
-                <th class="text-center">开工日期</th>
-                <th class="text-center">竣工日期</th>
                 <th class="text-center">系统录入</th>
                 <th class="text-center">工程验收</th>
                 <th class="text-center">控制价<br/>(万元)</th>
@@ -73,8 +71,6 @@
                     {% icon "glyphicon-remove" "#a80000" %}
                   {% endif %}
                 </td>
-                <td class="text-center">{{ object.project_begin|date:"Y-n-d"|default:"-" }}</td>
-                <td class="text-center">{{ object.project_finish|date:"Y-n-d"|default:"-" }}</td>
                 <td class="text-center">
                   {% if object.online_system_input %}
                     {% icon "glyphicon-ok" "#419641" %}
