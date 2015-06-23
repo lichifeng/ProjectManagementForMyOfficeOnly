@@ -65,8 +65,10 @@
                   {{ object.bid_date|date:"Y-n-d"|default:"-" }}
                 </td>
                 <td class="text-center">
-                  {% if object.contract %}
+                  {% if object.contract == 1 %}
                     {% icon "glyphicon-ok" "#419641" %}
+                    {% elif object.contract == 2 %}
+                    {% icon "glyphicon-hourglass" "#FFCC00" %}
                   {% else %}
                     {% icon "glyphicon-remove" "#a80000" %}
                   {% endif %}

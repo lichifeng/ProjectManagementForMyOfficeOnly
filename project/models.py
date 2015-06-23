@@ -98,10 +98,11 @@ class Project(models.Model):
     )
     # 合同签订
     contract_choices = (
-        (True, "已签订"),
-        (False, "未签订"),
+        (1, "已签订"),
+        (0, "未签订"),
+        (2, "签订中"),
     )
-    contract = models.BooleanField(verbose_name="合同签订", default=False, choices=contract_choices)
+    contract = models.IntegerField(verbose_name="合同签订", default=0, choices=contract_choices)
     # 网上系统录入
     online_system_input_choices = (
         (True, "已录入"),

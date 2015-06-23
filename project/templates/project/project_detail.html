@@ -65,8 +65,10 @@
           {% else %}
           {% icon "glyphicon-remove" "#990000" %}
         {% endif %} </td>
-        <td>{% if contract %}
+        <td>{% if contract == 1 %}
         {% icon "glyphicon-ok" "#419641" %}
+          {% elif contract == 2 %}
+          {% icon "glyphicon-hourglass" "#FFCC00" %}
           {% else %}
           {% icon "glyphicon-remove" "#990000" %}    
         {% endif %} </td>
